@@ -3,7 +3,6 @@ GO := GO15VENDOREXPERIMENT=1 go
 NAME := golang-http-master
 OS := $(shell uname)
 MAIN_GO := hello.go
-VERSION := $(shell cat VERSION)
 ROOT_PACKAGE := $(GIT_PROVIDER)/$(ORG)/$(NAME)
 GO_VERSION := $(shell $(GO) version | sed -e 's/^[^0-9.]*\([0-9.]*\).*/\1/')
 PACKAGE_DIRS := $(shell $(GO) list ./... | grep -v /vendor/)
@@ -61,19 +60,3 @@ lint: vendor | $(PKGS) $(GOLINT) # ❷
 	    test -z "$$($(GOLINT) $$pkg | tee /dev/stderr)" || ret=1 ; \
 	done ; exit $$ret
 
-tag:
-ifeq ($(OS),Darwin)
-	sed -i "" -e "s/version:.*/version: $(VERSION)/" ./charts/$(NAME)/Chart.yaml
-	sed -i "" -e "s/tag: .*/tag: $(VERSION)/" ./charts/$(NAME)/values.yaml
-else ifeq ($(OS),Linux)
-	sed -i -e "s/version:.*/version: $(VERSION)/" ./charts/$(NAME)/Chart.yaml
-	sed -i -e "s/repository: .*/repository: $(JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST):$(JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT)\/$(ORG)\/$(NAME)/" ./charts/$(NAME)/values.yaml
-	sed -i -e "s/tag: .*/tag: $(VERSION)/" ./charts/$(NAME)/values.yaml
-else
-	echo "platfrom $(OS) not supported to tag with"
-	exit -1
-endif
-	git add --all
-	git commit -m "release $(VERSION)" --allow-empty # if first release then no verion update is performed
-	git tag -fa v$(VERSION) -m "Release version $(VERSION)"
-	git push origin v$(VERSION)
