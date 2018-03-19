@@ -30,9 +30,13 @@ pipeline {
 
             }
           }
-          dir ('/home/jenkins/go/src//rawlingsj/golang-http-master') {
+          dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master/charts/preview') {
            container('go') {
-             sh "make preview"
+             sh "make linux"
+
+             sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION ."
+             sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:$PREVIEW_VERSION"
+
              sh "jx preview --app $APP_NAME --dir ../.."
            }
           }
@@ -52,7 +56,10 @@ pipeline {
             sh "echo \$(jx-release-version) > VERSION"
           }
           dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
+            checkout scm
             container('go') {
+              sh "make tag"
+
               sh "make build"
 
               sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION) ."
@@ -66,7 +73,7 @@ pipeline {
           branch 'master'
         }
         steps {
-          dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
+          dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master/charts/golang-http-master') {
             container('go') {
               sh 'jx step changelog --version \$(cat ../../VERSION)'
 
