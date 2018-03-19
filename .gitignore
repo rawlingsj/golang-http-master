@@ -7,3 +7,4 @@
 *.im?
 target
 work
+bin/
