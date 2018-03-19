@@ -47,24 +47,26 @@ pipeline {
           branch 'master'
         }
         steps {
-          dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
-            checkout scm
-          }
-          dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master/charts/golang-http-master') {
-              // ensure we're not on a detached head
-              sh "git checkout master"
-              // until we switch to the new kubernetes / jenkins credential implementation use git credentials store
-              sh "git config --global credential.helper store"
-              // so we can retrieve the version in later steps
-              sh "echo \$(jx-release-version) > VERSION"
+          container('go') {
+            dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
+              checkout scm
+            }
+            dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master/charts/golang-http-master') {
+                // ensure we're not on a detached head
+                sh "git checkout master"
+                // until we switch to the new kubernetes / jenkins credential implementation use git credentials store
+                sh "git config --global credential.helper store"
+                // so we can retrieve the version in later steps
+                sh "echo \$(jx-release-version) > VERSION"
 
-              sh "make tag"
-          }
-          dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
-            container('go') {
-              sh "make build"
-              sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION) ."
-              sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION)"
+                sh "make tag"
+            }
+            dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
+              container('go') {
+                sh "make build"
+                sh "docker build -t \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION) ."
+                sh "docker push \$JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST:\$JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT/$ORG/$APP_NAME:\$(cat VERSION)"
+              }
             }
           }
         }
