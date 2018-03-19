@@ -3,7 +3,7 @@ pipeline {
         label "jenkins-go"
     }
     environment {
-      ORG               = ''
+      ORG               = 'rawlingsj'
       APP_NAME          = 'golang-http-master'
       GIT_PROVIDER      = 'github.com'
       GIT_CREDS         = credentials('jenkins-x-git')
@@ -23,14 +23,14 @@ pipeline {
         }
         steps {
 
-          dir ('/home/jenkins/go/src/github.com//golang-http-master') {
+          dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
             checkout scm
             container('go') {
               sh "make preview"
 
             }
           }
-          dir ('/home/jenkins/go/src///golang-http-master') {
+          dir ('/home/jenkins/go/src//rawlingsj/golang-http-master') {
            container('go') {
              sh "make preview"
              sh "jx preview --app $APP_NAME --dir ../.."
@@ -51,12 +51,7 @@ pipeline {
             // so we can retrieve the version in later steps
             sh "echo \$(jx-release-version) > VERSION"
           }
-          dir ('/home/jenkins/go/src/github.com//golang-http-master') {
-            container('go') {
-              sh "make tag"
-            }
-          }
-          dir ('/home/jenkins/go/src/github.com//golang-http-master') {
+          dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
             container('go') {
               sh "make build"
 
@@ -71,7 +66,7 @@ pipeline {
           branch 'master'
         }
         steps {
-          dir ('/home/jenkins/go/src/github.com//golang-http-master') {
+          dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
             container('go') {
               sh 'jx step changelog --version \$(cat ../../VERSION)'
 
