@@ -47,17 +47,15 @@ pipeline {
           branch 'master'
         }
         steps {
-          container('go') {
-            // ensure we're not on a detached head
-            sh "git checkout master"
-            // until we switch to the new kubernetes / jenkins credential implementation use git credentials store
-            sh "git config --global credential.helper store"
-            // so we can retrieve the version in later steps
-            sh "echo \$(jx-release-version) > VERSION"
-          }
           dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
-            checkout scm
             container('go') {
+              // ensure we're not on a detached head
+              sh "git checkout master"
+              // until we switch to the new kubernetes / jenkins credential implementation use git credentials store
+              sh "git config --global credential.helper store"
+              // so we can retrieve the version in later steps
+              sh "echo \$(jx-release-version) > VERSION"
+
               sh "make tag"
 
               sh "make build"

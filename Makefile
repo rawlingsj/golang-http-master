@@ -1,8 +1,9 @@
 SHELL := /bin/bash
 GO := GO15VENDOREXPERIMENT=1 go
 NAME := golang-http-master
-VERSION := $(shell cat VERSION)
 OS := $(shell uname)
+MAIN_GO := hello.go
+VERSION := $(shell cat VERSION)
 ROOT_PACKAGE := $(GIT_PROVIDER)/$(ORG)/$(NAME)
 GO_VERSION := $(shell $(GO) version | sed -e 's/^[^0-9.]*\([0-9.]*\).*/\1/')
 PACKAGE_DIRS := $(shell $(GO) list ./... | grep -v /vendor/)
@@ -16,7 +17,7 @@ all: build
 check: fmt build test
 
 build:
-	CGO_ENABLED=$(CGO_ENABLED) $(GO) build $(BUILDFLAGS) -o build/$(NAME) $(NAME).go
+	CGO_ENABLED=$(CGO_ENABLED) $(GO) build $(BUILDFLAGS) -o build/$(NAME) $(MAIN_GO).go
 
 test: 
 	CGO_ENABLED=$(CGO_ENABLED) $(GO) test $(PACKAGE_DIRS) -test.v
@@ -24,7 +25,7 @@ test:
 full: $(PKGS)
 
 install:
-	GOBIN=${GOPATH}/bin $(GO) install $(BUILDFLAGS) $(NAME).go
+	GOBIN=${GOPATH}/bin $(GO) install $(BUILDFLAGS) $(MAIN_GO).go
 
 fmt:
 	@FORMATTED=`$(GO) fmt $(PACKAGE_DIRS)`
@@ -34,7 +35,7 @@ clean:
 	rm -rf build release
 
 linux:
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/$(NAME) $(NAME).go
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/$(NAME) $(MAIN_GO).go
 
 .PHONY: release clean
 
