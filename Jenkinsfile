@@ -48,6 +48,7 @@ pipeline {
         }
         steps {
           dir ('/home/jenkins/go/src/github.com/rawlingsj/golang-http-master') {
+            checkout scm
             container('go') {
               // ensure we're not on a detached head
               sh "git checkout master"
