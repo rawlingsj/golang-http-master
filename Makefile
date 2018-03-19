@@ -63,17 +63,17 @@ lint: vendor | $(PKGS) $(GOLINT) # ❷
 
 tag:
 ifeq ($(OS),Darwin)
-	sed -i "" -e "s/version:.*/version: $(RELEASE_VERSION)/" ./charts/$(NAME)/Chart.yaml
-	sed -i "" -e "s/tag: .*/tag: $(RELEASE_VERSION)/" ./charts/$(NAME)/values.yaml
+	sed -i "" -e "s/version:.*/version: $(VERSION)/" ./charts/$(NAME)/Chart.yaml
+	sed -i "" -e "s/tag: .*/tag: $(VERSION)/" ./charts/$(NAME)/values.yaml
 else ifeq ($(OS),Linux)
-	sed -i -e "s/version:.*/version: $(RELEASE_VERSION)/" ./charts/$(NAME)/Chart.yaml
+	sed -i -e "s/version:.*/version: $(VERSION)/" ./charts/$(NAME)/Chart.yaml
 	sed -i -e "s/repository: .*/repository: $(JENKINS_X_DOCKER_REGISTRY_SERVICE_HOST):$(JENKINS_X_DOCKER_REGISTRY_SERVICE_PORT)\/$(ORG)\/$(NAME)/" ./charts/$(NAME)/values.yaml
-	sed -i -e "s/tag: .*/tag: $(RELEASE_VERSION)/" ./charts/$(NAME)/values.yaml
+	sed -i -e "s/tag: .*/tag: $(VERSION)/" ./charts/$(NAME)/values.yaml
 else
 	echo "platfrom $(OS) not supported to tag with"
 	exit -1
 endif
 	git add --all
-	git commit -m "release $(RELEASE_VERSION)" --allow-empty # if first release then no verion update is performed
-	git tag -fa v$(RELEASE_VERSION) -m "Release version $(RELEASE_VERSION)"
-	git push origin v$(RELEASE_VERSION)
+	git commit -m "release $(VERSION)" --allow-empty # if first release then no verion update is performed
+	git tag -fa v$(VERSION) -m "Release version $(VERSION)"
+	git push origin v$(VERSION)

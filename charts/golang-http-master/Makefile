@@ -1,7 +1,6 @@
 CHART_REPO := http://jenkins-x-chartmuseum:8080
 CURRENT=$(pwd)
 NAME := golang-http-master
-RELEASE_VERSION := $(shell cat ../../VERSION)
 
 build: clean
 	rm -rf requirements.lock
