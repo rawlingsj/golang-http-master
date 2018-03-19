@@ -17,7 +17,7 @@ all: build
 check: fmt build test
 
 build:
-	CGO_ENABLED=$(CGO_ENABLED) $(GO) build $(BUILDFLAGS) -o build/$(NAME) $(MAIN_GO).go
+	CGO_ENABLED=$(CGO_ENABLED) $(GO) build $(BUILDFLAGS) -o build/$(NAME) $(MAIN_GO)
 
 test: 
 	CGO_ENABLED=$(CGO_ENABLED) $(GO) test $(PACKAGE_DIRS) -test.v
@@ -25,7 +25,7 @@ test:
 full: $(PKGS)
 
 install:
-	GOBIN=${GOPATH}/bin $(GO) install $(BUILDFLAGS) $(MAIN_GO).go
+	GOBIN=${GOPATH}/bin $(GO) install $(BUILDFLAGS) $(MAIN_GO)
 
 fmt:
 	@FORMATTED=`$(GO) fmt $(PACKAGE_DIRS)`
@@ -35,7 +35,7 @@ clean:
 	rm -rf build release
 
 linux:
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/$(NAME) $(MAIN_GO).go
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/$(NAME) $(MAIN_GO)
 
 .PHONY: release clean
 
